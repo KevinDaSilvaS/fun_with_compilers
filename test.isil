@@ -1,0 +1,5 @@
+IF 12 MAIOR 12*2 ENTAO : 
+    DIGA "maior"
+. SENAO : 
+    DIGA "menor"
+. 
