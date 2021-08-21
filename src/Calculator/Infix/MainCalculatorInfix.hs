@@ -1,9 +1,7 @@
 module Calculator.Infix.MainCalculatorInfix where
 
-import Calculator.Infix.SintaticAnalyser
-
-import Calculator.Infix.CalculatorInfixTokens 
-import Calculator.Infix.SemanticAnalyser
+import Calculator.Infix.SintaticAnalyser ( startSintaticAnalysis )
+import Calculator.Infix.SemanticAnalyser ( semanticAnalysis )
 
 main = do
     let list = startSintaticAnalysis "30+1*2+3/3-1"
