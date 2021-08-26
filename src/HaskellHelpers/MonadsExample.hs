@@ -80,3 +80,38 @@ intimes start max = do
     intimes first (max-1)
 
 -- in3 start = return start >>= moveKnight >>= moveKnight >>= moveKnight  
+
+{- 
+WRONG
+gcdReverse :: Int -> Int -> Writer [String] Int  
+gcdReverse a b  
+    | b == 0 = do  
+        tell ["Finished with " ++ show a]  
+        return a  
+    | otherwise = do  
+        result <- gcdReverse b (a `mod` b)  
+        tell [show a ++ " mod " ++ show b ++ " = " ++ show (a `mod` b)]  
+        return result 
+
+gcd' :: Int -> Int -> Writer [String] Int  
+gcd' a b  
+            | b == 0 = do  
+                tell ["Finished with " ++ show a]  
+                return a  
+            | otherwise = do  
+                tell [show a ++ " mod " ++ show b ++ " = " ++ show (a `mod` b)]  
+                gcd' b (a `mod` b)   -}
+
+landLeft' n (l, r)
+    | abs (l + n - r) < 4 = Right (l+n, r)
+    | otherwise = Left 
+        ("[landLeft'] Failed with " ++ show l 
+        ++ " birds on the left and " 
+        ++ show r ++ " on the right side.")
+            
+landRight' n (l, r)
+    | abs (l - (r + n)) < 4 = Right (l, r+n)
+    | otherwise = Left 
+        ("[landRight'] Failed with " ++ show l 
+        ++ " birds on the left and " 
+        ++ show r ++ " on the right side.")
