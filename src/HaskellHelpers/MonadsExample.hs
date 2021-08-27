@@ -107,11 +107,13 @@ landLeft' n (l, r)
     | otherwise = Left 
         ("[landLeft'] Failed with " ++ show l 
         ++ " birds on the left and " 
-        ++ show r ++ " on the right side.")
+        ++ show r ++ " on the right side. because " 
+        ++ show n ++ " birds tried to land on the left side")
             
 landRight' n (l, r)
     | abs (l - (r + n)) < 4 = Right (l, r+n)
     | otherwise = Left 
         ("[landRight'] Failed with " ++ show l 
         ++ " birds on the left and " 
-        ++ show r ++ " on the right side.")
+        ++ show r ++ " on the right side. because " 
+        ++ show n ++ " birds tried to land on the right side")
