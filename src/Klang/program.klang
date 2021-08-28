@@ -1,0 +1,23 @@
+let abc := 10
+let foo := "oi"
+
+//let foo := "oi dnv" -- error
+
+if (foo == "oi") :
+    show ("o valor era o esperado")
+;
+
+let ls = [1, 2, 3]
+
+routine ls :
+    let valor := ls<-0
+    show ("o valor atual é: " ++ valor)
+;
+
+if (len ls < 30) :
+    show "lista é menor que 30"
+    let mult := 1 - (len ls) * 2 + 5
+    show ("a mult é: " ++ mult)
+;
+
+show "compilou"
