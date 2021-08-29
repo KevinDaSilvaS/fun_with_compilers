@@ -23,4 +23,5 @@ data Tokens = LetToken         |
               SeparatorToken   |
               IntegerToken     |
               StringToken      |
-              ShowToken        deriving (Show, Eq)
+              ShowToken        |
+              EmptyToken       deriving (Show, Eq)
