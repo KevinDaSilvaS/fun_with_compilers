@@ -1,19 +1,20 @@
 module Klang.LexicalAnalyserKlang where
 
 import Klang.TokensKlang
-identifierSet = ['A'..'z'] ++ ['_']
-spaces = [' ']
-lineBreaks = ['\n', '\r']
-endInput = spaces ++ lineBreaks
-integers = ['0'..'9']
 
-startAutomaton ('l':xs) line col [] = letAutomaton xs line col "l"
+import Klang.KlangSets
+
+startAutomaton :: [Char] -> Int -> Int -> [Char] -> ((Tokens, [Char]), [Char], Int, Int)
 startAutomaton (':':xs) line col [] = assignAutomaton xs line col ":"
+startAutomaton ('"':xs) line col [] = stringAutomaton xs line col "\""
+startAutomaton ('l':xs) line col [] = letAutomaton xs line col "l"
 startAutomaton (x:xs) line col reading 
     | x `elem` integers   = integerAutomaton xs line col [x]
     | x `elem` lineBreaks = startAutomaton xs (line+1) col []
-startAutomaton xs line col []       = identifierAutomaton xs line col []
-startAutomaton _ line col reading   = 
+    | x `elem` spaces     = startAutomaton xs line (col+1) []
+startAutomaton [] line col reading = ((EmptyToken, ""), [], line, col)
+startAutomaton xs line col []      = identifierAutomaton xs line col []
+startAutomaton _ line col reading  = 
     error ("Unexpected token in line:" 
     ++ show line ++ " col:" ++ show col ++ " while reading:" ++ show reading)
 
@@ -46,3 +47,9 @@ integerAutomaton (x:xs) line col reading
     | otherwise = error ("Unexpected token " ++ show x ++ " in line:" 
     ++ show line ++ " col:" ++ show col ++ " while reading:" ++ show reading)
 integerAutomaton [] line col reading = ((IntegerToken, reading), [], line, col)
+
+stringAutomaton [] line col reading = error ("Unexpected EOF in line:" 
+    ++ show line ++ " col:" ++ show col ++ " while reading:" ++ show reading)
+stringAutomaton (x:xs) line col reading
+    | x == '"'  = ((StringToken, reading), [], line, col+1)
+    | otherwise = stringAutomaton xs line (col+1) (reading++[x])
