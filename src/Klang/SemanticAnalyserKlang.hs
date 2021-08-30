@@ -2,17 +2,17 @@ module Klang.SemanticAnalyserKlang where
 
 import Klang.IRBuilder
 import Klang.TokensKlang
-import Klang.SintaticAnalyserKlang
 
-startSemanticAnalysis symbolTable (Program ptr ptr') = nSymbolTable'
+startSemanticAnalysis :: ([[Char]], [[Char]]) -> ParsingTree -> ([[Char]], [[Char]])
+startSemanticAnalysis symbolTable (Program ptr ptr') = output
     where
-        (nSymbolTable)  = startSemanticAnalysis symbolTable ptr
-        (nSymbolTable') = startSemanticAnalysis nSymbolTable ptr'
-startSemanticAnalysis symbolTable (Assign (token, identifier) value ptr)
-    | fst value == IdentifierToken && notElem value' symbolTable =
-        error ("Identifier " ++ show value' ++ " not defined.")
+        nSymbolTable = startSemanticAnalysis symbolTable ptr
+        output = startSemanticAnalysis nSymbolTable ptr'
+startSemanticAnalysis symbolTable (Assign (_, identifier) (tokenValue, value) ptr)
+    | tokenValue == IdentifierToken && notElem value identifiersList =
+        error ("Identifier " ++ show value ++ " not defined.")
     | otherwise = startSemanticAnalysis nSymbolTable ptr
     where
-        value' = snd value
-        nSymbolTable = identifier:symbolTable
+        (identifiersList, valuesList) = symbolTable
+        nSymbolTable = (identifier:identifiersList, value:valuesList)
 startSemanticAnalysis st EndNode = st
