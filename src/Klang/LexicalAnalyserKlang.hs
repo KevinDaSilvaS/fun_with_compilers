@@ -8,6 +8,10 @@ startAutomaton :: [Char] -> Int -> Int -> [Char] -> ((Tokens, [Char]), [Char], I
 startAutomaton (':':xs) line col [] = assignAutomaton xs line col ":"
 startAutomaton ('"':xs) line col [] = stringAutomaton xs line col "\""
 startAutomaton ('l':xs) line col [] = letAutomaton xs line col "l"
+startAutomaton ('+':xs) line col [] = ((SumToken, "+"), xs, line, col+1)
+startAutomaton ('-':xs) line col [] = ((SubToken, "-"), xs, line, col+1)
+startAutomaton ('*':xs) line col [] = ((MultToken, "*"), xs, line, col+1)
+startAutomaton ('/':xs) line col [] = ((DivisionToken, "/"), xs, line, col+1)
 startAutomaton (x:xs) line col reading 
     | x `elem` integers   = integerAutomaton xs line col [x]
     | x `elem` lineBreaks = startAutomaton xs (line+1) col []
