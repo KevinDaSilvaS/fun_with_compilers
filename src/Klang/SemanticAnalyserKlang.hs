@@ -16,3 +16,4 @@ startSemanticAnalysis symbolTable (Assign (_, identifier) (tokenValue, value) pt
         (identifiersList, valuesList) = symbolTable
         nSymbolTable = (identifier:identifiersList, value:valuesList)
 startSemanticAnalysis st EndNode = st
+startSemanticAnalysis _ _ = error "Unexpected error in semantic analysis"
