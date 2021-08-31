@@ -21,4 +21,6 @@ endInput = spaces ++ lineBreaks
 
 integers :: [Char]
 integers = ['0'..'9']
+
+arithmeticOperators = ["+", "-", "/", "*"]
         
