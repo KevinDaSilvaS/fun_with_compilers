@@ -55,5 +55,5 @@ integerAutomaton [] line col reading = ((IntegerToken, reading), [], line, col)
 stringAutomaton [] line col reading = error ("Unexpected EOF in line:" 
     ++ show line ++ " col:" ++ show col ++ " while reading:" ++ show reading)
 stringAutomaton (x:xs) line col reading
-    | x == '"'  = ((StringToken, reading), [], line, col+1)
+    | x == '"'  = ((StringToken, reading++"\""), [], line, col+1)
     | otherwise = stringAutomaton xs line (col+1) (reading++[x])
