@@ -8,10 +8,19 @@ import Klang.CodeGenerationKlang
 import Klang.LexicalAnalyserKlang
 
 main = do
-    let t = startSintaticAnalysis "let v := 32 let a := v" 1 0 
+    let t = startSintaticAnalysis "let v := 32 let a := v let r := \"oi\"" 1 0 
     let pt = createParseTree t
     let ir = startSemanticAnalysis ([], []) pt
     makeFile ir
+
+sintaticAnalysisOnly = 
+    startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2" 1 0 
+
+sintaticAndIr = do
+    let t = startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2" 1 0
+    let pt = createParseTree t
+    --let ir = startSemanticAnalysis ([], []) pt
+    print pt
 
 getAllTokens = do 
     let t = getToken "let v := 32 + 2 - 1 * 3 let a := v / 2" 1 0 
