@@ -18,7 +18,7 @@ symbolTable = [] -}
 
 startSintaticAnalysis [] _ _ = []
 startSintaticAnalysis program line col
-    | fst token == LetToken = _identifier remain nline ncol
+    | fst token == LetToken = token:_identifier remain nline ncol
     | snd token `elem` arithmeticOperators = token:_value remain nline ncol
     | otherwise = error ("Expected let. Received:" ++ show token)
     where
@@ -50,7 +50,6 @@ _value program line col
         (token, value):startSintaticAnalysis remain nline ncol
     | otherwise = error ("Expected identifier. Received:" ++ show (token, value))
     where
-
         ((token, value), remain, nline, ncol) = startAutomaton program line col [] 
         ((_, nextTokenValue), _, _, _) = startAutomaton remain line col [] 
  
