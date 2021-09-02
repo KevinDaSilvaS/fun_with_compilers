@@ -8,6 +8,7 @@ startAutomaton :: [Char] -> Int -> Int -> [Char] -> ((Tokens, [Char]), [Char], I
 startAutomaton (':':xs) line col [] = assignAutomaton xs line col ":"
 startAutomaton ('"':xs) line col [] = stringAutomaton xs line col "\""
 startAutomaton ('l':xs) line col [] = letAutomaton xs line col "l"
+startAutomaton ('s':xs) line col [] = showAutomaton xs line col "s"
 startAutomaton ('+':xs) line col [] = ((SumToken, "+"), xs, line, col+1)
 startAutomaton ('-':xs) line col [] = ((SubToken, "-"), xs, line, col+1)
 startAutomaton ('*':xs) line col [] = ((MultToken, "*"), xs, line, col+1)
@@ -57,3 +58,11 @@ stringAutomaton [] line col reading = error ("Unexpected EOF in line:"
 stringAutomaton (x:xs) line col reading
     | x == '"'  = ((StringToken, reading++"\""), xs, line, col+1)
     | otherwise = stringAutomaton xs line (col+1) (reading++[x])
+
+showAutomaton ('h':xs) line col "s"   = showAutomaton xs line (col+1) "sh"
+showAutomaton ('o':xs) line col "sh"  = showAutomaton xs line (col+1) "sho"
+showAutomaton ('w':xs) line col "sho" = showAutomaton xs line (col+1) "show"
+showAutomaton (' ':xs) line col "show" = ((ShowToken, "show"), xs, line, col+1)
+showAutomaton [] line col "show"       = ((ShowToken, "show"), [], line, col)
+showAutomaton xs line col reading     = 
+        identifierAutomaton xs line col reading
