@@ -19,11 +19,12 @@ sintaticAnalysisOnly =
     startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2" 1 0 
 
 sintaticAndIr = do
-    let t = startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2" 1 0
+    let t = startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" let s := v + a" 1 0
     let pt = createKlangParseTree t
     print pt
-    let ir = startSemanticAnalysis [] pt
-    print $ show ir
+    let st = startSemanticAnalysis [] pt
+    print $ show st
+    makeFile st pt
 
 getAllTokens = do 
     let t = getToken "let v := 32 + 2 - 1 * 3 let a := v / 2 let id := \"oi\" + 2" 1 0 
