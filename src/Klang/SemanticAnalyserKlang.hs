@@ -40,8 +40,20 @@ parseExpr st expr = (IdentifierToken, 1);
 
 parseOperator st prevVal (Operator (_,"+") valueExp) =
     prevVal + snd (parseExpr st valueExp)
-parseOperator st prevVal (Operator (_,"/") valueExp) =
-    prevVal / snd (parseExpr st valueExp)
+parseOperator st prevVal (Operator (_,"/") (Integer (IdentifierToken, value) expr ))
+    | isJust existentIdentifier && numValue /= 0 =  
+        prevVal / snd (parseExpr st (Integer (IdentifierToken, value) expr))
+    | otherwise = error "Cannot perform division by zero"
+    where
+        existentIdentifier = lookup value st
+        existentIdentifierValue = snd (fromJust existentIdentifier)
+        numValue = read existentIdentifierValue :: Float
+parseOperator st prevVal (Operator (_,"/") (Integer (IntegerToken, value) expr ))
+    | numValue /= 0 = 
+        prevVal / snd (parseExpr st (Integer (IntegerToken, value) expr))
+    | otherwise = error "Cannot perform division by zero"
+    where
+        numValue = read value :: Float
 parseOperator st prevVal (Operator (_,"-") valueExp) =
     prevVal - snd (parseExpr st valueExp)
 parseOperator st prevVal (Operator (_,"*") valueExp) =
