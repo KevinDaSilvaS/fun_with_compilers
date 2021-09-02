@@ -27,7 +27,7 @@ sintaticAndIr = do
     makeFile st pt
 
 getAllTokens = do 
-    let t = getToken "let v := 32 + 2 - 1 * 3 let a := v / 2 let id := \"oi\" + 2" 1 0 
+    let t = getToken "let v := 32 + 2 - 1 * 3 show v  let a := v / 2 let id := \"oi\" + 2" 1 0 
     print t
 
 getToken [] l c = []
