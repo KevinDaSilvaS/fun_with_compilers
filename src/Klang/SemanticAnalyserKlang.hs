@@ -5,21 +5,55 @@ import Klang.KlangSets
 import Klang.TokensKlang
 
 import Klang.IRBuilderKlang
-import Data.Maybe (isJust)
+import Data.Maybe (isJust, fromJust)
+import Data.Bifunctor ( Bifunctor(second) ) 
 
-startSemanticAnalysis symbolTable (Assign 
+startSemanticAnalysis symbolTable (Assign
+    (idToken, identifier) (Str value) ptr) = 
+        startSemanticAnalysis nSymbolTable ptr
+        where
+            nSymbolTable = symbolTable ++ [(identifier, value)]
+startSemanticAnalysis symbolTable (Assign
     (idToken, identifier) (Expr expr) ptr)
-    | isJust existentIdentifier  = 
-        error ("Identifier " ++ identifier ++ " already declared") 
+    | isJust existentIdentifier  =
+        error ("Identifier " ++ identifier ++ " already declared")
     | otherwise = startSemanticAnalysis nSymbolTable ptr
     where
         existentIdentifier = lookup identifier symbolTable
-        nSymbolTable = symbolTable ++ [(identifier, parseExpr symbolTable expr)]
+        nSymbolTable = symbolTable ++ [(identifier, nValue)]
+        parsedExp = parseExpr symbolTable expr
+        nValue = second show parsedExp
 startSemanticAnalysis st ptr = st
 
+parseExpr st (Integer (IntegerToken, value) op) =
+    (IntegerToken, parseOperator st (read value :: Float) op)
+parseExpr st (Integer (IdentifierToken, value) op)
+    | isJust existentIdentifier =
+        (IntegerToken,
+        parseOperator st (read existentIdentifierValue :: Float) op)
+    | otherwise = error ("Error identifier: " ++ value ++" not declared")
+    where
+        existentIdentifier = lookup value st
+        existentIdentifierValue = snd (fromJust existentIdentifier)
+parseExpr st expr = (IdentifierToken, 1);
 
-parseExpr st (Integer (IntegerToken, value) op) = 0;
-parseExpr st expr = 1;
+
+parseOperator st prevVal (Operator (_,"+") valueExp) =
+    prevVal + snd (parseExpr st valueExp)
+parseOperator st prevVal (Operator (_,"/") valueExp) =
+    prevVal / snd (parseExpr st valueExp)
+parseOperator st prevVal (Operator (_,"-") valueExp) =
+    prevVal - snd (parseExpr st valueExp)
+parseOperator st prevVal (Operator (_,"*") valueExp) =
+    prevVal * snd (parseExpr st valueExp)
+parseOperator st prevVal EndExpr = prevVal
+parseOperator st prevVal v = error ("Value not expected" ++ show v)
+
+
+
+
+
+
 --startSemanticAnalysis st ptr = error ""
 
 {- startSemanticAnalysis :: ([[Char]], [[Char]]) -> ParsingTree -> ([[Char]], [[Char]])
