@@ -12,6 +12,9 @@ generateFile st (Assign (_, id) _ ptr) = const ++ generateFile st ptr
     where
         (Just (var, value)) = lookup id st
         const = "const " ++ id ++ " = " ++ value ++ ";\n"
+generateFile st (Show (_, _) expr ptr) = consoleLog ++ generateFile st ptr
+    where
+    consoleLog = "console.log( " ++ getContextExpr expr ++ " );\n"
 generateFile st _ = ""
 
 getContext :: ([[Char]], [[Char]]) -> [[Char]]
@@ -23,3 +26,10 @@ getContext (xs, ys)
         x = last xs
         y = last ys
         const = "const " ++ x ++ " = " ++ y ++ ";\n"
+
+getContextExpr :: Expr -> [Char]
+getContextExpr EndExpr = []
+getContextExpr (Integer (_, value) expr) = value ++ getContextExpr expr
+getContextExpr (Operator (_, value) expr) = " " ++ value ++ " " ++ getContextExpr expr
+getContextExpr (Str (_, value)) = value
+getContextExpr _ = error "Type of Expr not expected"
