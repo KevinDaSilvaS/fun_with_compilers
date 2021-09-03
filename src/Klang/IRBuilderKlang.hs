@@ -12,12 +12,17 @@ data Expr = Expr Expr  |
 
 data ParsingTree = Program ParsingTree |
                    Assign (Tokens, String) Expr ParsingTree |
+                   Show (Tokens, String) Expr ParsingTree   |
                    EndNode
                    deriving (Show, Eq)
 
 createKlangParseTree [] = EndNode
 createKlangParseTree [x] = EndNode
-createKlangParseTree ((LetToken, value):xs) = createKlangParseTree xs
+createKlangParseTree ((LetToken, value):xs)  = createKlangParseTree xs
+createKlangParseTree ((ShowToken, value):xs) = 
+    Show (ShowToken, value) expr (createKlangParseTree remain)
+    where
+        (expr, remain) = parseExpression xs
 createKlangParseTree ((IdentifierToken, value):xs)
     | nextToken == IdentifierToken || nextToken == IntegerToken =
         Assign (IdentifierToken, value) 
