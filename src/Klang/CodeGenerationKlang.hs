@@ -28,7 +28,7 @@ getContext (xs, ys)
         const = "const " ++ x ++ " = " ++ y ++ ";\n"
 
 getContextExpr :: Expr -> [Char]
-getContextExpr EndExpr = []
+getContextExpr EndExpr = ""
 getContextExpr (Integer (_, value) expr) = value ++ getContextExpr expr
 getContextExpr (Operator (_, value) expr) = " " ++ value ++ " " ++ getContextExpr expr
 getContextExpr (Str (_, value)) = value

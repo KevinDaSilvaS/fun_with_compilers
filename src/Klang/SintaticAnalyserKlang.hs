@@ -53,4 +53,3 @@ _value program line col
     where
         ((token, value), remain, nline, ncol) = startAutomaton program line col [] 
         ((_, nextTokenValue), _, _, _) = startAutomaton remain line col [] 
- 

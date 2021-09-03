@@ -17,7 +17,6 @@ data ParsingTree = Program ParsingTree |
                    deriving (Show, Eq)
 
 createKlangParseTree [] = EndNode
-createKlangParseTree [x] = EndNode
 createKlangParseTree ((LetToken, value):xs)  = createKlangParseTree xs
 createKlangParseTree ((ShowToken, value):xs) = 
     Show (ShowToken, value) expr (createKlangParseTree remain)
@@ -54,6 +53,10 @@ parseExpression ((t, "+"):xs) = (Operator (t, "+") expr, remain)
     where
         (expr, remain) = parseExpression xs
 parseExpression ((t, "-"):xs) = (Operator (t, "-") expr, remain)
+    where
+        (expr, remain) = parseExpression xs
+parseExpression ((StringToken, value):xs) = 
+    (Str (StringToken, value), remain)
     where
         (expr, remain) = parseExpression xs
 parseExpression xs = (EndExpr, xs)
