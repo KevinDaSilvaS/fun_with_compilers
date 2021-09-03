@@ -16,10 +16,10 @@ main = do
     print "end"
 
 sintaticAnalysisOnly = 
-    startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2" 1 0 
+    startSintaticAnalysis "let v := 32 + 2 - 1 * 3 show v + a let a := v / 2" 1 0 
 
 sintaticAndIr = do
-    let t = startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2 let u := 1 let t := a / u let r := \"oi\" let s := v + a" 1 0
+    let t = startSintaticAnalysis "let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 + 2 show v + a let s := v + a" 1 0
     let pt = createKlangParseTree t
     print pt
     let st = startSemanticAnalysis [] pt
