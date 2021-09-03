@@ -5,11 +5,15 @@ import Klang.KlangSets
 import Klang.TokensKlang
 
 import Klang.IRBuilderKlang
-import Data.Maybe (isJust, fromJust)
-import Data.Bifunctor ( Bifunctor(second) ) 
+import Data.Maybe (isJust, fromJust, isNothing)
+import Data.Bifunctor ( Bifunctor(second) )
 
+startSemanticAnalysis symbolTable (Show (idToken, identifier) expr ptr)
+        | snd parsedExp + 1 > 0 = startSemanticAnalysis symbolTable ptr
+        where
+            parsedExp = parseExpr symbolTable expr
 startSemanticAnalysis symbolTable (Assign
-    (idToken, identifier) (Str value) ptr) = 
+    (idToken, identifier) (Str value) ptr) =
         startSemanticAnalysis nSymbolTable ptr
         where
             nSymbolTable = symbolTable ++ [(identifier, value)]
@@ -25,23 +29,34 @@ startSemanticAnalysis symbolTable (Assign
         nValue = second show parsedExp
 startSemanticAnalysis st ptr = st
 
-parseExpr st (Integer (IntegerToken, value) op) =
-    (IntegerToken, parseOperator st (read value :: Float) op)
+parseExpr st (Integer (IntegerToken, value) op)
+    | length existentIdentifierValue' == length value = (IntegerToken, parseOperator st (read value :: Float) op)
+    | otherwise = error
+    ("Arithmetic operators can only be performed in numeric tokens. in: "
+    ++ value)
+    where
+        existentIdentifierValue' = filter (`elem` floats) value
 parseExpr st (Integer (IdentifierToken, value) op)
-    | isJust existentIdentifier =
+    | isJust existentIdentifier && 
+    length existentIdentifierValue' == length existentIdentifierValue =
         (IntegerToken,
         parseOperator st (read existentIdentifierValue :: Float) op)
-    | otherwise = error ("Error identifier: " ++ value ++" not declared")
+    | isNothing existentIdentifier = 
+        error ("Error identifier: " ++ value ++" not declared")
+    | otherwise = error 
+        ("Arithmetic operators can only be performed in numeric tokens. in: "
+        ++ value)
     where
         existentIdentifier = lookup value st
         existentIdentifierValue = snd (fromJust existentIdentifier)
+        existentIdentifierValue' = filter (`elem` floats) existentIdentifierValue
 parseExpr st expr = (IdentifierToken, 1);
 
 
 parseOperator st prevVal (Operator (_,"+") valueExp) =
     prevVal + snd (parseExpr st valueExp)
 parseOperator st prevVal (Operator (_,"/") (Integer (IdentifierToken, value) expr ))
-    | isJust existentIdentifier && numValue /= 0 =  
+    | isJust existentIdentifier && numValue /= 0 =
         prevVal / snd (parseExpr st (Integer (IdentifierToken, value) expr))
     | otherwise = error "Cannot perform division by zero"
     where
@@ -49,7 +64,7 @@ parseOperator st prevVal (Operator (_,"/") (Integer (IdentifierToken, value) exp
         existentIdentifierValue = snd (fromJust existentIdentifier)
         numValue = read existentIdentifierValue :: Float
 parseOperator st prevVal (Operator (_,"/") (Integer (IntegerToken, value) expr ))
-    | numValue /= 0 = 
+    | numValue /= 0 =
         prevVal / snd (parseExpr st (Integer (IntegerToken, value) expr))
     | otherwise = error "Cannot perform division by zero"
     where
