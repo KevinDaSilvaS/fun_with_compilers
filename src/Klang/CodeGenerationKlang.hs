@@ -30,6 +30,7 @@ getContext (xs, ys)
 getContextExpr :: Expr -> [Char]
 getContextExpr EndExpr = ""
 getContextExpr (Integer (_, value) expr) = value ++ getContextExpr expr
-getContextExpr (Operator (_, value) expr) = " " ++ value ++ " " ++ getContextExpr expr
+getContextExpr (Operator (_, value) expr) = 
+    " " ++ value ++ " " ++ getContextExpr expr
 getContextExpr (Str (_, value)) = value
 getContextExpr _ = error "Type of Expr not expected"
