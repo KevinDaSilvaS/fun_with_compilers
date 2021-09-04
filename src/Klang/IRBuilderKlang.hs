@@ -88,9 +88,6 @@ parseExpression ((StringToken, value):xs) =
     remain
     where
         (expr, remain) = parseExpression xs
-{- parseExpression ((_, value):xs)
-    | value `elem` comparativeOperators = 
-        error "Cannot compare String or Int type with Boolean comparison" -}
 parseExpression xs = (EndExpr, xs)
 
 parseComparativeExpressions expr ((token, ">="):xs) =
