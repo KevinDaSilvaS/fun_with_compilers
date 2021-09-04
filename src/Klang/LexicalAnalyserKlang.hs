@@ -9,10 +9,16 @@ startAutomaton (':':xs) line col [] = assignAutomaton xs line col ":"
 startAutomaton ('"':xs) line col [] = stringAutomaton xs line col "\""
 startAutomaton ('l':xs) line col [] = letAutomaton xs line col "l"
 startAutomaton ('s':xs) line col [] = showAutomaton xs line col "s"
+startAutomaton ('i':xs) line col [] = ifAutomaton xs line col "i"
+startAutomaton (';':xs) line col [] = ((CloseBlockToken, ";"), xs, line, col+1)
 startAutomaton ('+':xs) line col [] = ((SumToken, "+"), xs, line, col+1)
 startAutomaton ('-':xs) line col [] = ((SubToken, "-"), xs, line, col+1)
 startAutomaton ('*':xs) line col [] = ((MultToken, "*"), xs, line, col+1)
 startAutomaton ('/':xs) line col [] = ((DivisionToken, "/"), xs, line, col+1)
+startAutomaton ('>':xs) line col [] = comparisonAutomaton xs line col ">"
+startAutomaton ('<':xs) line col [] = comparisonAutomaton xs line col "<"
+startAutomaton ('!':xs) line col [] = comparisonAutomaton xs line col "!"
+startAutomaton ('=':xs) line col [] = comparisonAutomaton xs line col "="
 startAutomaton (x:xs) line col reading 
     | x `elem` integers   = integerAutomaton xs line col [x]
     | x `elem` lineBreaks = startAutomaton xs (line+1) col []
@@ -42,9 +48,7 @@ identifierAutomaton [] line col reading =
 
 assignAutomaton ('=':xs) line col ":" = 
     ((AssignToken, ":="), xs, line, col+1)
-assignAutomaton _ line col reading   = 
-    error ("Unexpected token in line:" 
-    ++ show line ++ " col:" ++ show col ++ " while reading:" ++ show reading)
+assignAutomaton xs line col reading   = ((StartBlockToken, ":"), xs, line, col+1)
 
 integerAutomaton (x:xs) line col reading
     | x `elem` integers = integerAutomaton xs line (col+1) (reading++[x])
@@ -66,3 +70,22 @@ showAutomaton (' ':xs) line col "show" = ((ShowToken, "show"), xs, line, col+1)
 showAutomaton [] line col "show"       = ((ShowToken, "show"), [], line, col)
 showAutomaton xs line col reading     = 
         identifierAutomaton xs line col reading
+
+ifAutomaton ('f':xs) line col "i" = ((ConditionalToken, "if"), xs, line, col+1)
+ifAutomaton xs line col reading   = identifierAutomaton xs line col reading
+
+comparisonAutomaton ('=':xs) line col "<" = 
+    ((LessThanToken, "<="), xs, line, col+1)
+comparisonAutomaton xs line col "<"       = 
+    ((LessToken, "<"), xs, line, col+1)
+comparisonAutomaton ('=':xs) line col ">" = 
+    ((GreaterThanToken, ">="), xs, line, col+1)
+comparisonAutomaton xs line col ">"       = 
+    ((GreaterToken, ">"), xs, line, col+1)
+comparisonAutomaton ('=':xs) line col "=" = 
+    ((EqualityToken, "=="), xs, line, col+1)
+comparisonAutomaton ('=':xs) line col "!" = 
+    ((NotEqualToken, "!="), xs, line, col+1)
+comparisonAutomaton _ line col reading    = error 
+    ("Error unexpected symbol: " ++ " in line: " 
+    ++ show line ++ " col: " ++ show col ++ "while reading: " ++ reading)

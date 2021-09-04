@@ -28,7 +28,7 @@ sintaticAndIr = do
     --print t
 
 getAllTokens = do 
-    let t = getToken "let v := 32 + 2 - 1 * 3 show v  let a := v / 2 let id := \"oi\" + 2" 1 0 
+    let t = getToken " if id : ;  > < >= != == <= let v := 32 + 2 - 1 * 3 show v  let a := v / 2 let id := \"oi\" + 2" 1 0 
     print t
 
 getToken [] l c = []
