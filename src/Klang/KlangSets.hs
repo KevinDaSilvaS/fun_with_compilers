@@ -25,4 +25,6 @@ integers = ['0'..'9']
 floats = '.':integers
 
 arithmeticOperators = ["+", "-", "/", "*"]
+
+comparativeOperators = [">", ">=", "<", "<=", "!=", "=="]
         
