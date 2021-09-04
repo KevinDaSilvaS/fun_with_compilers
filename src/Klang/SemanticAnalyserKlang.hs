@@ -8,6 +8,10 @@ import Klang.IRBuilderKlang
 import Data.Maybe (isJust, fromJust, isNothing)
 import Data.Bifunctor ( Bifunctor(second) )
 
+startSemanticAnalysis symbolTable (If (ifToken, ifValue) expr openblock ptr) 
+    | snd parsedExp + 1 > 0 = startSemanticAnalysis symbolTable ptr
+        where
+            parsedExp = parseExpr symbolTable expr
 startSemanticAnalysis symbolTable (Show (idToken, identifier) expr ptr)
         | snd parsedExp + 1 > 0 = startSemanticAnalysis symbolTable ptr
         where
@@ -27,6 +31,9 @@ startSemanticAnalysis symbolTable (Assign
         nSymbolTable = symbolTable ++ [(identifier, nValue)]
         parsedExp = parseExpr symbolTable expr
         nValue = second show parsedExp
+startSemanticAnalysis 
+    symbolTable (CloseBlock (closeToken, closeValue) ptr) =
+        startSemanticAnalysis symbolTable ptr
 startSemanticAnalysis st ptr = st
 
 parseExpr st (Integer (IntegerToken, value) op)
@@ -50,6 +57,10 @@ parseExpr st (Integer (IdentifierToken, value) op)
         existentIdentifier = lookup value st
         existentIdentifierValue = snd (fromJust existentIdentifier)
         existentIdentifierValue' = filter (`elem` floats) existentIdentifierValue
+parseExpr st (ComparativeExpr expr comparative expr') = exprFinal
+    where
+        exprFinal = (token, floatVal + snd (parseExpr st expr')) 
+        (token, floatVal) = parseExpr st expr
 parseExpr st expr = (IdentifierToken, 1);
 
 

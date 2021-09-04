@@ -15,6 +15,11 @@ generateFile st (Assign (_, id) _ ptr) = const ++ generateFile st ptr
 generateFile st (Show (_, _) expr ptr) = consoleLog ++ generateFile st ptr
     where
     consoleLog = "console.log( " ++ getContextExpr expr ++ " );\n"
+generateFile st (If _ expr openblock ptr) = ifCondition
+    where
+        ifCondition = "if ( " ++ getContextExpr expr ++" ) { \n" 
+            ++ generateFile st ptr ++ "\n"
+generateFile st (CloseBlock _ ptr) = "}\n" ++ generateFile st ptr
 generateFile st _ = ""
 
 getContext :: ([[Char]], [[Char]]) -> [[Char]]
@@ -32,5 +37,8 @@ getContextExpr EndExpr = ""
 getContextExpr (Integer (_, value) expr) = value ++ getContextExpr expr
 getContextExpr (Operator (_, value) expr) = 
     " " ++ value ++ " " ++ getContextExpr expr
+getContextExpr (ComparativeExpr expr' (_, value) expr) = 
+    "(" ++ getContextExpr expr' ++ ") " ++ value 
+    ++ " (" ++ getContextExpr expr ++ ")"
 getContextExpr (Str (_, value)) = value
 getContextExpr _ = error "Type of Expr not expected"
