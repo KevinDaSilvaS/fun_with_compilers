@@ -19,7 +19,7 @@ sintaticAnalysisOnly =
     startSintaticAnalysis "let v := 32 + 2 - 1 * 3 show v + a let a := v / 2" 1 0 
 
 sintaticAndIr = do
-    let t = startSintaticAnalysis " if 5 < 2 + 3 : if 6 > 2 : show 5 ; show 4 ; let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 + 2 show v + a show \"ola\" let s := v + a" 1 0 0
+    let t = startSintaticAnalysis "let v_ := \"32\" if v_ < \"2 + 3\" : if 6 > 2 : show 5 ; show 4 ; let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 + 2 show v + a show \"ola\" let s := v + a" 1 0 0
         {- let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 + 2 show v + a show \"ola\" let s := v + a -}
     let pt = createKlangParseTree t
     print pt
