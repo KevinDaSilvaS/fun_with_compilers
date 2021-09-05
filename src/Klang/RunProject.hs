@@ -18,8 +18,20 @@ main = do
 sintaticAnalysisOnly = 
     startSintaticAnalysis "let v := 32 + 2 - 1 * 3 show v + a let a := v / 2" 1 0 
 
+mainJson = do
+        contents <- readFile "./test.klang"
+        if null contents then
+          print ""
+        else do
+          let result = startSintaticAnalysis (head contents : tail contents) 1 0 0
+          let pt = createKlangParseTree result
+          let st = startSemanticAnalysis [] pt
+          print pt
+          makeFile st pt
+          return ()
+
 sintaticAndIr = do
-    let t = startSintaticAnalysis "let v_ := \"32\" if v_ < \"2 + 3\" : if 6 > 2 : show 5 ; show 4 ; let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 + 2 show v + a show \"ola\" let s := v + a" 1 0 0
+    let t = startSintaticAnalysis " routine 20 : ; let v_ := \"32\" if v_ < \"2 + 3\" : if 6 > 2 : show 5 ; show 4 ; let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 > 2 show v + a show \"ola\" let s := v + a" 1 0 0
         {- let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 + 2 show v + a show \"ola\" let s := v + a -}
     let pt = createKlangParseTree t
     print pt
@@ -29,7 +41,7 @@ sintaticAndIr = do
     --print t
 
 getAllTokens = do 
-    let t = getToken " if id : ;  > < >= != == <= let v := 32 + 2 - 1 * 3 show v  let a := v / 2 let id := \"oi\" + 2" 1 0 
+    let t = getToken "routine 20 : ; if id : ;  > < >= != == <= let v := 32 + 2 - 1 * 3 show v  let a := v / 2 let id := \"oi\" + 2" 1 0 
     print t
 
 getToken [] l c = []
