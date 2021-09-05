@@ -21,3 +21,24 @@ if (len ls < 30) :
 ;
 
 show "compilou"
+
+if <conditional_expr> :
+    <block>
+;
+
+routine 20 : 
+    <block>
+;
+
+let a := 32
+let b := "ola"
+
+let c := a + 5 * 2 / 2 - 1
+let d := b + a // outputs error i cannot add 32 to a string value
+
+show <arithmetic_expresion> //a + 5 * 2 / 2 - 1
+show <string>
+show <number>
+show <identifier>
+
+<conditional_expr> 5 > 3 or 30 <= 1 (!=, ==, >, >=, <, <=)
