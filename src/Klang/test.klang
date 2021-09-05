@@ -16,4 +16,7 @@ let s := v + a
 routine 10 :
     show "ola mundo"
     show _GET_CURR_INDEX
+    if _GET_CURR_INDEX > 5 :
+        show "index is greater than 5"
+    ;
 ;

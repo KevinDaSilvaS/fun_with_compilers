@@ -15,7 +15,11 @@ const s = 46.5;
 for (let _$loop = 0; _$loop < 10; _$loop++) {
 console.log( "ola mundo" );
 console.log( _$loop );
+if ( (_$loop) > (5) ) { 
+console.log( "index is greater than 5" );
 }
+}
+
 
 
 
