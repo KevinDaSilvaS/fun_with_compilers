@@ -7,6 +7,7 @@ import Klang.SintaticAnalyserKlang
 import Klang.CodeGenerationKlang
 import Klang.LexicalAnalyserKlang
 import Klang.IRBuilderKlang
+import Klang.TokensKlang
 
 main = do
     let t = startSintaticAnalysis "let v := 32 let a := v let r := \"oi\"" 1 0 0
@@ -25,7 +26,7 @@ mainJson = do
         else do
           let result = startSintaticAnalysis (head contents : tail contents) 1 0 0
           let pt = createKlangParseTree result
-          let st = startSemanticAnalysis [] pt
+          let st = startSemanticAnalysis [("_GET_CURR_INDEX", (IntegerToken, "0"))] pt
           print pt
           makeFile st pt
           return ()
@@ -35,7 +36,7 @@ sintaticAndIr = do
         {- let v := 32 + 2 - 1 * 3 let a := v / 2 let r := \"oi\" show 9 + 2 show v + a show \"ola\" let s := v + a -}
     let pt = createKlangParseTree t
     print pt
-    let st = startSemanticAnalysis [] pt
+    let st = startSemanticAnalysis [("_GET_CURR_INDEX", (IntegerToken, "0"))] pt
     print $ show st
     makeFile st pt
     --print t

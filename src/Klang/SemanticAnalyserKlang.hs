@@ -10,17 +10,16 @@ import Data.Bifunctor ( Bifunctor(second) )
 
 startSemanticAnalysis symbolTable 
     (Routine (timesToken, timesValue) (StartBlockToken, _) ptr) 
-    | timesToken == IntegerToken = startSemanticAnalysis nst ptr
+    | timesToken == IntegerToken = startSemanticAnalysis symbolTable ptr
     | timesToken == IdentifierToken && isNothing existentIdentifier  
     = error 
     ("Error identifier: " ++ timesValue ++ "not declared.")
     | timesToken == IdentifierToken && existentIdentifierValue == IntegerToken 
-    = startSemanticAnalysis nst ptr
+    = startSemanticAnalysis symbolTable ptr
     | otherwise = error 
         ("Error execution times in loop must be an integer. " 
         ++ show existentIdentifierValue ++ "received.")
     where
-        nst = symbolTable ++ [("_GET_CURR_INDEX", (IntegerToken, "0"))]
         existentIdentifier = lookup timesValue symbolTable
         existentIdentifierValue = fst (fromJust existentIdentifier)
 startSemanticAnalysis symbolTable (If (ifToken, ifValue) expr openblock ptr) 
