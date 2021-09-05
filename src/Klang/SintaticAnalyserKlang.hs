@@ -19,6 +19,7 @@ symbolTable = [] -}
 startSintaticAnalysis [] _ _ 0 = []
 startSintaticAnalysis program line col closingBlocks
     | fst token == LetToken  = token:_identifier remain nline ncol closingBlocks
+    | fst token == RoutineToken  = token:_value remain nline ncol closingBlocks
     | fst token == ShowToken = token:_value remain nline ncol closingBlocks
     | fst token == StartBlockToken && closingBlocks >= 0 = 
         token:startSintaticAnalysis remain nline ncol (closingBlocks+1)

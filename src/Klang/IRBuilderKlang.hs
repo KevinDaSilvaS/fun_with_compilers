@@ -16,12 +16,19 @@ data ParsingTree = Program ParsingTree |
                    Assign (Tokens, String) Expr ParsingTree |
                    Show (Tokens, String) Expr ParsingTree   |
                    If (Tokens, String)
-                        Expr (Tokens, String) ParsingTree   |
-                   CloseBlock (Tokens, String) ParsingTree     |
+                        Expr (Tokens, String)  ParsingTree  |
+                   Routine (Tokens, String) 
+                   (Tokens, String) ParsingTree             |
+                   CloseBlock (Tokens, String) ParsingTree  |
                    EndNode
                    deriving (Show, Eq)
 
 createKlangParseTree [] = EndNode
+createKlangParseTree ((RoutineToken, value):xs) =
+    Routine times openBlock (createKlangParseTree remain)
+    where
+        [times, openBlock] = take 2 xs
+        remain = drop 2 xs
 createKlangParseTree ((LetToken, value):xs) = createKlangParseTree xs
 createKlangParseTree ((StartBlockToken, value):xs) =
     error "Unexpected open block symbol"

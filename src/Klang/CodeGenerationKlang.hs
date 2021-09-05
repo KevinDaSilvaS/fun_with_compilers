@@ -3,11 +3,16 @@ module Klang.CodeGenerationKlang where
 import System.IO
 import Klang.IRBuilderKlang
 import Data.Maybe (isJust, fromJust)
+import Klang.TokensKlang
 
 makeFile st ir = do
     writeFile "./klang_parsed.js" (generateFile st ir)
     return ()
 
+generateFile st (Routine (_, times) _ ptr) = loop
+    where
+        loop = "for (let _$loop = 0; _$loop < "++ times ++ "; _$loop++) {\n"
+            ++ generateFile st ptr ++ "\n"
 generateFile st (Assign (_, id) _ ptr) = const ++ generateFile st ptr
     where
         (Just (var, value)) = lookup id st
@@ -34,6 +39,8 @@ getContext (xs, ys)
 
 getContextExpr :: Expr -> [Char]
 getContextExpr EndExpr = ""
+getContextExpr (Integer (_, "_GET_CURR_INDEX") expr) = 
+    "_$loop" ++ getContextExpr expr
 getContextExpr (Integer (_, value) expr) = value ++ getContextExpr expr
 getContextExpr (Operator (_, value) expr) = 
     " " ++ value ++ " " ++ getContextExpr expr

@@ -10,6 +10,7 @@ startAutomaton ('"':xs) line col [] = stringAutomaton xs line col "\""
 startAutomaton ('l':xs) line col [] = letAutomaton xs line col "l"
 startAutomaton ('s':xs) line col [] = showAutomaton xs line col "s"
 startAutomaton ('i':xs) line col [] = ifAutomaton xs line col "i"
+startAutomaton ('r':xs) line col [] = routineAutomaton xs line col "r"
 startAutomaton (';':xs) line col [] = ((CloseBlockToken, ";"), xs, line, col+1)
 startAutomaton ('+':xs) line col [] = ((SumToken, "+"), xs, line, col+1)
 startAutomaton ('-':xs) line col [] = ((SubToken, "-"), xs, line, col+1)
@@ -73,6 +74,21 @@ showAutomaton xs line col reading     =
 
 ifAutomaton ('f':xs) line col "i" = ((ConditionalToken, "if"), xs, line, col+1)
 ifAutomaton xs line col reading   = identifierAutomaton xs line col reading
+
+routineAutomaton ('o':xs) line col "r" = 
+    routineAutomaton xs line (col+1) "ro"
+routineAutomaton ('u':xs) line col "ro" = 
+    routineAutomaton xs line (col+1) "rou"
+routineAutomaton ('t':xs) line col "rou" = 
+    routineAutomaton xs line (col+1) "rout"
+routineAutomaton ('i':xs) line col "rout" = 
+    routineAutomaton xs line (col+1) "routi"
+routineAutomaton ('n':xs) line col "routi" = 
+    routineAutomaton xs line (col+1) "routin"
+routineAutomaton ('e':xs) line col "routin" = 
+    ((RoutineToken, "routine"), xs, line, col+1)
+routineAutomaton xs line col reading   = 
+    identifierAutomaton xs line col reading
 
 comparisonAutomaton ('=':xs) line col "<" = 
     ((LessThanToken, "<="), xs, line, col+1)
