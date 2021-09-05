@@ -14,6 +14,7 @@ data Tokens = LetToken         |
               EqualityToken    |
               NotEqualToken    |
               ConditionalToken |
+              RoutineToken     |
               StartBlockToken  |
               CloseBlockToken  |
               OpenParenToken   |
