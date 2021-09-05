@@ -50,19 +50,39 @@ parseExpr st (Integer (IdentifierToken, value) op)
         parseOperator st (read existentIdentifierValue :: Float) op)
     | isNothing existentIdentifier = 
         error ("Error identifier: " ++ value ++" not declared")
-    | otherwise = error 
-        ("Arithmetic operators can only be performed in numeric tokens. in: "
-        ++ value)
     where
         existentIdentifier = lookup value st
         existentIdentifierValue = snd (fromJust existentIdentifier)
         existentIdentifierValue' = filter (`elem` floats) existentIdentifierValue
-parseExpr st (ComparativeExpr expr comparative expr') = exprFinal
+parseExpr st (ComparativeExpr expr comparative expr') 
+    | parseComparativeRules st expr expr' = exprFinal
+    | otherwise = error "Cannot compare values from different types"
     where
         exprFinal = (token, floatVal + snd (parseExpr st expr')) 
         (token, floatVal) = parseExpr st expr
-parseExpr st expr = (IdentifierToken, 1);
+parseExpr st expr = (EmptyToken, 0);
 
+parseComparativeRules st 
+        (Integer (exprTk, value) _) 
+        (Str strContent) 
+        | exprTk == IdentifierToken && 
+        fst existentIdentifierValue == fst strContent = True
+        | otherwise = False
+          where
+            existentIdentifier = lookup value st
+            existentIdentifierValue = fromJust existentIdentifier
+parseComparativeRules st 
+            (Str strContent) 
+            (Integer (exprTk, value) _) 
+            | exprTk == IdentifierToken 
+            && fst existentIdentifierValue == fst strContent = True
+            | otherwise = False
+              where
+                existentIdentifier = lookup value st
+                existentIdentifierValue = fromJust existentIdentifier
+parseComparativeRules st (Integer _ _) (Integer _ _) = True
+parseComparativeRules st (Str _ ) (Str _ ) = True
+parseComparativeRules _ _ _ = False
 
 parseOperator st prevVal (Operator (_,"+") valueExp) =
     prevVal + snd (parseExpr st valueExp)
@@ -86,32 +106,3 @@ parseOperator st prevVal (Operator (_,"*") valueExp) =
     prevVal * snd (parseExpr st valueExp)
 parseOperator st prevVal EndExpr = prevVal
 parseOperator st prevVal v = error ("Value not expected" ++ show v)
-
-
-
-
-
-
---startSemanticAnalysis st ptr = error ""
-
-{- startSemanticAnalysis :: ([[Char]], [[Char]]) -> ParsingTree -> ([[Char]], [[Char]])
-startSemanticAnalysis symbolTable (Program ptr ptr') = output
-    where
-        nSymbolTable = startSemanticAnalysis symbolTable ptr
-        output = startSemanticAnalysis nSymbolTable ptr'
-startSemanticAnalysis symbolTable
-    (Arithmetic (tokenOperator, operator) (tokenValue, value) ptr)
-        | tokenValue == IdentifierToken && notElem value identifiersList =
-            error ("Identifier " ++ show value ++ " not defined.")
-        where
-            (identifiersList, valuesList) = symbolTable
-startSemanticAnalysis symbolTable (Assign (_, identifier) (tokenValue, value) ptr)
-    | tokenValue == IdentifierToken && notElem value identifiersList =
-        error ("Identifier " ++ show value ++ " not defined.")
-    | otherwise = startSemanticAnalysis nSymbolTable ptr
-    where
-        (identifiersList, valuesList) = symbolTable
-        nSymbolTable = (identifier:identifiersList, value:valuesList)
-startSemanticAnalysis st EndNode = st
-startSemanticAnalysis _ _ = error "Unexpected error in semantic analysis" -}
-
