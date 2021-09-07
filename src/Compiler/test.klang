@@ -1,0 +1,32 @@
+let v_ = "132" 
+
+if v_ < "243" : 
+
+    if 6 > 2 : 
+        show 5 
+    ; 
+    show 4 
+; 
+
+let v := 32 + 2 - 1 * 3 
+
+let a := v / 2 
+
+let r := "oi" 
+
+show 9 + 2 
+
+show v * a + 5 
+
+show "ola" 
+
+let s := v + a
+
+routine 10 :
+    show "ola mundo"
+    show _GET_CURR_INDEX
+
+    if _GET_CURR_INDEX > 5 :
+        show "index is greater than 5"
+    ;
+;
