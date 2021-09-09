@@ -3,6 +3,7 @@ module Compiler.RunProject where
 import Compiler.LexicalAnalyser ( startAutomaton )
 import Compiler.TokensKlang
 import Compiler.SintaticAnalyser
+import Compiler.ParseTree
 
 getAllTokens = do
     --let t = parseResult (startAutomaton "#let $a := 12 + * - / \"oi\"" 1 0 [])
@@ -19,3 +20,9 @@ sintaticAnalysis = do
         --"let a := 12 + * - / \"oi\" : ; >= if > < != == <= routine if_ t5"
     let r = startSintaticAnalysis program 1 0 0
     print r
+
+parseTree = do
+    let program = "let a := 12 / 2 - readLine * 3 + 2 let r := \"oi\" if a > c : show a + 23 ;"
+    let r = startSintaticAnalysis program 1 0 0
+    let tree = createParseTree r
+    print tree
