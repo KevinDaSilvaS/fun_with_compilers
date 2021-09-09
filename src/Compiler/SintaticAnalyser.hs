@@ -2,6 +2,11 @@ module Compiler.SintaticAnalyser where
 
 import Compiler.LexicalAnalyser ( startAutomaton )
 import Compiler.TokensKlang
+    ( TokensKlang(OpenBlockToken, LetToken, IfToken, RoutineToken,
+                  CloseBlockToken, ShowToken, AssignToken, IdentifierToken,
+                  IntegerToken, StringToken, PlusToken, MinusToken, MultToken,
+                  DivisionToken, EqualityToken, NotEqlToken, LessToken, GreaterToken,
+                  LessEqlToken, GreaterEqlToken) )
 
 startSintaticAnalysis [] _ _ 0 = []
 startSintaticAnalysis program line col closingBlocks 
