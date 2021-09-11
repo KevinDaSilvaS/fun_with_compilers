@@ -5,6 +5,9 @@ import Compiler.TokensKlang
 import Compiler.SintaticAnalyser
 import Compiler.ParseTree
 
+import Compiler.SemanticAnalyser
+import Compiler.CodeGenerationKlang
+
 getAllTokens = do
     --let t = parseResult (startAutomaton "#let $a := 12 + * - / \"oi\"" 1 0 [])
     let t = getToken "let a := 12 + * - / \"oi\" : ; >= if > < != == <= routine if_ t5" 1 0
@@ -22,7 +25,16 @@ sintaticAnalysis = do
     print r
 
 parseTree = do
-    let program = "let a := 12 / 2 - readLine * 3 + 2 let r := \"oi\" if a > c : show a + 23 ;"
+    let program = "let a := 12 / 2 - readLine * 3 + 2 routine v : ; let r := \"oi\" if a+2 > c*2 : show a + 23 ;"
     let r = startSintaticAnalysis program 1 0 0
     let tree = createParseTree r
     print tree
+semantic' = do
+    let program = "let a := 12 / 2 if a+2 > 2 : ; routine 2*2 : let b := \"ab\" show a + 23 show _GET_CURR_INDEX + readNum ;"
+    let r = startSintaticAnalysis program 1 0 0
+    let tree = createParseTree r
+    let sa = startSemanticAnalysis [("_GET_CURR_INDEX", (IntegerToken, "1")), ("readNum",(IntegerToken, "1")), ("readLine",(StringToken, ""))] tree
+   {-  print tree
+    print sa -}
+    makeFile tree
+    
