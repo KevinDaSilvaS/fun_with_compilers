@@ -6,7 +6,7 @@ import Compiler.TokensKlang
                   CloseBlockToken, ShowToken, AssignToken, IdentifierToken,
                   IntegerToken, StringToken, PlusToken, MinusToken, MultToken,
                   DivisionToken, EqualityToken, NotEqlToken, LessToken, GreaterToken,
-                  LessEqlToken, GreaterEqlToken) )
+                  LessEqlToken, GreaterEqlToken, EmptyToken) )
 
 startSintaticAnalysis [] _ _ 0 = []
 startSintaticAnalysis program line col closingBlocks 
@@ -20,6 +20,7 @@ startSintaticAnalysis program line col closingBlocks
         (token, value):startSintaticAnalysis remain nline ncol (closingBlocks-1)
     | token == ShowToken = 
         (token, value):_value remain nline ncol closingBlocks startSintaticAnalysis
+    | token == EmptyToken = startSintaticAnalysis [] nline ncol closingBlocks
     | otherwise = error ("[startSintaticAnalysis] Unexpected " 
         ++ value ++ ". line:" ++ show line ++ " col:" ++ show col)
     where
