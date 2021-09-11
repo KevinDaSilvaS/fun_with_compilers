@@ -63,9 +63,6 @@ identifierAutomaton (x:xs) line col [] =
     error ("[identifierAutomaton] Unexpected token "
         ++ [x] ++ " in line:"
         ++ show line ++ " col:" ++ show col)
-identifierAutomaton [] line col reading =
-    error ("[identifierAutomaton] Unexpected eof in line:"
-        ++ show line ++ " col:" ++ show col)
 identifierAutomaton xs line col reading =
     ((IdentifierToken, reading), line, col, xs)
 
