@@ -2,12 +2,12 @@ module Compiler.RunProject where
 
 import Compiler.LexicalAnalyser ( startAutomaton )
 import Compiler.TokensKlang
-import Compiler.SintaticAnalyser
-import Compiler.ParseTree
+import Compiler.SintaticAnalyser ( startSintaticAnalysis )
+import Compiler.ParseTree ( createParseTree )
 
-import Compiler.SemanticAnalyser
-import Compiler.CodeGenerationKlang
-import Compiler.SymbolTableKlang
+import Compiler.SemanticAnalyser ( startSemanticAnalysis )
+import Compiler.CodeGenerationKlang ( makeFile )
+import Compiler.SymbolTableKlang ( startSymbolTable )
 
 getAllTokens = do
     --let t = parseResult (startAutomaton "#let $a := 12 + * - / \"oi\"" 1 0 [])
@@ -31,7 +31,7 @@ parseTree = do
     let tree = createParseTree r
     print tree
 semantic' = do
-    let program = "let a := 12 / 2 if a+2 > 2 : ; routine 2*2 : let b := \"ab\" show a + 23 show _GET_CURR_INDEX + readNum ;"
+    let program = "let _nam     := _read let a := 12 / 2 let r := a + a  if a+2 > 2 : ; routine 2*2 : let b := \"ab\" show a + a show _GET_CURR_INDEX + readNum ;"
     let r = startSintaticAnalysis program 1 0 0
     let tree = createParseTree r
     let sa = startSemanticAnalysis startSymbolTable tree
