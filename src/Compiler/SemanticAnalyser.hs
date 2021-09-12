@@ -1,7 +1,7 @@
 module Compiler.SemanticAnalyser where
 
 import Compiler.ParseTree
-    ( Expr(Value, Arithmetic, EndExpr, Comparative),
+    ( Expr(Value, Arithmetic, EndExpr, Comparative, EndExpr),
       ParsingTree(EndNode, Assign, If, Routine, Show, CloseBlock) )
 import Compiler.TokensKlang
     ( TokensKlang(IntegerToken, EmptyToken, IdentifierToken,
@@ -81,5 +81,6 @@ parseArithmeticExpr st (Comparative (Value value' expr') operator (Value value e
     where
         (parsedTokenValue, _)  = resolveExpr st (Value value expr)
         (parsedTokenValue', _) = resolveExpr st (Value value' expr')
+parseArithmeticExpr _ EndExpr = ""
 parseArithmeticExpr _ expr = error "Only arithmetic expression, integer or string expected. Received: " 
     ++ show expr
