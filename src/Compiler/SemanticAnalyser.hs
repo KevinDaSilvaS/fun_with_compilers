@@ -6,7 +6,8 @@ import Compiler.ParseTree
 import Compiler.TokensKlang
     ( TokensKlang(IntegerToken, EmptyToken, IdentifierToken,
                   StringToken) )
-import Data.Maybe (isJust, fromJust, isNothing)
+import Compiler.SymbolTableKlang
+    ( dropScope, identifierNotAlreadyDefined, getIdentifier )
 
 startSemanticAnalysis symbolTable ((Assign identifier value):xs)
     | identifierNotAlreadyDefined symbolTable identifier =
@@ -17,33 +18,28 @@ startSemanticAnalysis symbolTable ((Assign identifier value):xs)
             :symbolTable
 startSemanticAnalysis symbolTable ((If expr _):xs) 
     | fst (resolveExpr symbolTable expr) /= EmptyToken = 
-        startSemanticAnalysis symbolTable xs
+        startSemanticAnalysis nSymbolTable xs
+    where
+        nSymbolTable =
+            ("$end_scope", (EmptyToken, ""))
+            :symbolTable
 startSemanticAnalysis symbolTable ((Routine expr _):xs) 
     | fst (resolveExpr symbolTable expr) == IntegerToken = 
-        startSemanticAnalysis symbolTable xs
+        startSemanticAnalysis nSymbolTable xs
     | otherwise = error "routine only accepts an integer as iterator value"
+    where
+        nSymbolTable =
+            ("$end_scope", (EmptyToken, ""))
+            :symbolTable
 startSemanticAnalysis symbolTable ((Show _ expr):xs) 
     | fst (resolveExpr symbolTable expr) /= EmptyToken = 
         startSemanticAnalysis symbolTable xs
 startSemanticAnalysis symbolTable ((CloseBlock _):xs) = 
-    startSemanticAnalysis symbolTable xs
+    startSemanticAnalysis nSymbolTable xs
+    where
+        nSymbolTable = dropScope symbolTable
 startSemanticAnalysis symbolTable [EndNode] = symbolTable
 startSemanticAnalysis st xs = error $ show xs
-
-identifierNotAlreadyDefined st (IdentifierToken, value)
-    | isJust existentIdentifier =
-        error ("Identifier " ++ value ++ " already defined.")
-    | otherwise = True
-    where
-        existentIdentifier = lookup value st
-identifierNotAlreadyDefined _ _ = error "Identifier expected"
-
-getIdentifier st (IdentifierToken, value)
-    | isJust existentIdentifier = fromJust existentIdentifier
-    | otherwise = error ("Identifier '" ++ value ++ "' not defined")
-    where
-        existentIdentifier = lookup value st
-getIdentifier _ _ = error "Identifier expected"
 
 resolveExpr st (Comparative expr _ expr') 
     | fst (resolveExpr st expr) == fst (resolveExpr st expr') = (StringToken, "value")
